@@ -1,0 +1,53 @@
+.counterContainer {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.counterButton {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  margin: 0.3em;
+  border: 0.2em solid;
+  border-radius: 10%;
+  text-decoration: none;
+  background-color: transparent;
+  font-weight: bold;
+  text-align: center;
+  font-size: large;
+  transition: all 0.2s;
+}
+
+.counterButton:hover,
+.counterButton:active {
+  border-color: var(--text-black);
+  color: var(--text-black);
+}
+
+.counterButtonRemove {
+  border-color: var(--button-varient-1);
+  color: var(--button-varient-1);
+}
+
+.counterButtonAdd {
+  border-color: var(--button-varient-2);
+  color: var(--button-varient-2);
+}
+
+.counterLabel {
+  display: inline-block;
+  border: 0.2em solid var(--page-background);
+  padding: 0.35em 1.2em;
+  margin: 0.3em;
+  font-weight: bold;
+  font-size: large;
+  text-align: center;
+  color: black;
+  width: 2em;
+}
+
+.counterIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
