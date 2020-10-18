@@ -1,0 +1,27 @@
+.cartItemContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cartItemTitle {
+  display: block;
+  font-weight: bold;
+  font-size: x-large;
+  color: var(--text-black);
+  padding-bottom: 0.1em;
+}
+
+.cartItemSubTitle {
+  display: block;
+  color: var(--text-green);
+}
+
+.cartItemPrice {
+  font-weight: bolder;
+  font-size: large;
+}
+
+.cartItemPrice__CurrencyIcon {
+  padding-right: 0.3em;
+}
