@@ -1,0 +1,78 @@
+.receiptContainer {
+  /* Box Shadow built by: https://www.cssmatic.com/box-shadow */
+  /* -webkit-box-shadow: 28px 24px 15px -10px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 28px 24px 15px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: 28px 24px 15px -10px rgba(0, 0, 0, 0.1); */
+
+  background-color: var(--receipt-background);
+  color: var(--text-white);
+
+  position: relative;
+  height: 80%;
+  padding: 32px 16px;
+}
+
+.receiptHeader {
+  display: flex;
+}
+
+/*
+  To create the "zig zag" pattern on the container
+  http://jsfiddle.net/justinmc/QqnD3/
+*/
+.receiptContainer::after {
+  content: '';
+  display: block;
+
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+
+  background: linear-gradient(-45deg, var(--card-background) 16px, transparent 0),
+    linear-gradient(45deg, var(--card-background) 16px, transparent 0);
+  background-position: left bottom;
+  background-repeat: repeat-x;
+  background-size: 32px 32px;
+  width: 100%;
+  height: 32px;
+}
+
+.receiptContainer::before {
+  content: '';
+  display: block;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+
+  background: linear-gradient(
+      -45deg,
+      var(--receipt-background) 16px,
+      var(--card-background) 16px,
+      var(--card-background) 16px,
+      transparent 0
+    ),
+    linear-gradient(45deg, transparent 16px, var(--card-background) 0);
+
+  background-position: left top;
+  background-repeat: repeat-x;
+  background-size: 32px;
+  width: 100%;
+  height: 32px;
+}
+
+.receiptListContainer {
+  text-align: end;
+}
+
+.receiptListItem {
+  list-style-type: none;
+}
+
+.receiptListContainer--subtotalWithDiscounts > .receiptListItem:first-child {
+  text-decoration: line-through;
+}
+
+.receiptListContainer--finalAmount > .receiptListItem:first-child {
+  font-size: large;
+}
