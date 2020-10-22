@@ -38,5 +38,8 @@ module.exports = {
   styleguideComponents: {
     Wrapper: `${root}/styleguide/Wrapper`,
   },
+  moduleAliases: {
+    root: path.resolve(__dirname, './'),
+  },
   webpackConfig,
 }

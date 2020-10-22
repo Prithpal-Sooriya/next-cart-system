@@ -4,6 +4,10 @@
   justify-content: space-between;
 }
 
+.cartItemTitleContainer {
+  width: 10em;
+}
+
 .cartItemTitle {
   display: block;
   font-weight: bold;

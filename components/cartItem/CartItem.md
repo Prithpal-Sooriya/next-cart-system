@@ -1,11 +1,33 @@
-### Default Component
+### Connected Component
+
+```tsx padded
+import CartItem from './CartItem'
+import ShoppingCartProvider from 'root/context/ShoppingCartContext'
+import { CartItemType } from 'root/utils/specialOffers'
+;<ShoppingCartProvider>
+  <CartItem type={CartItemType.Bread} />
+  <hr />
+  <CartItem type={CartItemType.Milk} />
+  <hr />
+  <CartItem type={CartItemType.Cheese} />
+  <hr />
+  <CartItem type={CartItemType.Soup} />
+  <hr />
+  <CartItem type={CartItemType.Butter} />
+</ShoppingCartProvider>
+```
+
+### Unconnected Component
 
 ```tsx
-import CartItem from './CartItem'
+import { CartItem } from './CartItem'
+const [amount, setAmount] = React.useState(0)
 ;<CartItem
-  title={'Cheese'}
-  specialOffer={'Buy a cheese, get second cheese for free!'}
+  title={'Test'}
+  specialOffer={'Test Special Offer'}
   itemPrice={0.9}
+  amount={amount}
+  setAmount={setAmount}
 />
 ```
 

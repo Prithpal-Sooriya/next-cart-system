@@ -3,16 +3,17 @@ Base Colours
 Using this generated pallet - 
 */
 :root {
+  --page-background: #d9d9d9;
   --card-background: #ffffff;
   --button-varient-1: #284b63;
   --button-varient-2: #3c6e71;
   --text-black: #353535;
   --text-green: #3c6e71;
   --text-white: #ffffff;
-  --page-background: #d9d9d9;
   --receipt-background: #353535;
 }
 
 html {
   font-family: 'Roboto', sans-serif;
+  background-color: var(--page-background);
 }

@@ -1,58 +1,55 @@
 import styles from './Receipt.module.css'
+import {
+  buyCheeseGetOneFreeOffer,
+  buySoupHalfPriceBreadOffer,
+  CartItemType,
+  getCartItemName,
+  ICartItem,
+  IDiscount,
+  oneThirdOffButterOffer,
+} from '../../utils/specialOffers'
+import { useShoppingCartState } from '../../context/ShoppingCartContext'
 
-type IRecieptContainer = {
+type IRecieptContainerProps = {
   className?: string
 }
 
-type IRecieptList = {
-  className?: string
-  items: Array<string>
-}
-
-type IRecieptListSubTotalAndDiscounts = {
-  subTotal: string
-  discounts?: Array<string>
-}
-
-type IReceiptFnalAmount = {
-  finalAmount: string
-}
-
-type IBasketItem = {
-  type: string
-  amount: number
+type IRecieptListItem = {
+  name?: string
   price: number
 }
 
-type ISpecialOffer = {
-  name: string
-  overallDiscount: number
+type IRecieptListProps = {
+  className?: string
+  items: ReadonlyArray<IRecieptListItem>
 }
 
-type IReceipt = {
-  basketItems: Array<IBasketItem>
-  specialOffers: Array<ISpecialOffer>
+type IRecieptListSubTotalAndDiscountsProps = {
+  subTotal: number
+  discounts?: ReadonlyArray<Pick<IDiscount, 'discountName' | 'amountSaved'>>
+}
+
+type IReceiptFinalAmountProps = {
+  finalAmount: number
 }
 
 function combineClassNames(...classnames: Array<string | undefined>): string {
   return classnames.filter(Boolean).join(' ')
 }
 
-function filterInvalidBasketItems(basketItem: IBasketItem): boolean {
-  if (basketItem.amount <= 0) {
-    return false
-  }
-
-  return true
+function isDefined<T>(t?: T): t is T {
+  return t !== undefined
 }
 
-const calculateBasketPrice = (amount: number, price: number): number => amount * price
+const filterInvalidBasketItems = (basketItem: ICartItem): boolean => basketItem.amount > 0
 
-const calculateSubTotal = (arr: Array<IBasketItem>): number =>
-  arr
-    .filter(filterInvalidBasketItems)
-    .map((b) => calculateBasketPrice(b.amount, b.price))
-    .reduce((subTotal, itemAmount) => subTotal + itemAmount)
+const calculateCartItemTotalPrice = ({
+  amount,
+  price,
+}: Pick<ICartItem, 'amount' | 'price'>): number => amount * price
+
+const calculateSubTotal = (arr: ReadonlyArray<number>): number =>
+  arr.reduce((subTotal, itemAmount) => subTotal + itemAmount, 0)
 
 const calculateFinalAmount = (subTotal: number, discounts: Array<number>): number =>
   Math.max(
@@ -60,73 +57,99 @@ const calculateFinalAmount = (subTotal: number, discounts: Array<number>): numbe
     discounts.reduce((remainder, discount) => remainder - discount, subTotal),
   )
 
-const toValidCurrency = (n: number): string => `£${Math.abs(n).toFixed(2)}`
+const toValidCurrency = (n: number): string => (n < 0 ? '- ' : '') + `£${Math.abs(n).toFixed(2)}`
 
-export const Receipt: React.FC<IReceipt> = ({ basketItems, specialOffers }) => {
-  const filteredBasketItems: Array<IBasketItem> = basketItems.filter(filterInvalidBasketItems)
-  const filteredSpecialOffers: Array<ISpecialOffer> = specialOffers.filter(
-    (s) => s.overallDiscount > 0,
-  )
+const useDiscounts = (): ReadonlyArray<IDiscount> => {
+  const { cartItems } = useShoppingCartState()
+  const cheeseItem = cartItems.get(CartItemType.Cheese)
+  const soupItem = cartItems.get(CartItemType.Soup)
+  const breadItem = cartItems.get(CartItemType.Bread)
+  const butterItem = cartItems.get(CartItemType.Butter)
+  return [
+    cheeseItem && buyCheeseGetOneFreeOffer(cheeseItem),
+    soupItem && breadItem && buySoupHalfPriceBreadOffer(soupItem, breadItem),
+    butterItem && oneThirdOffButterOffer(butterItem),
+  ]
+    .filter(isDefined)
+    .filter((d) => d.amountSaved > 0)
+}
 
-  const subTotal: number = calculateSubTotal(basketItems)
-  const finalAmount: number = calculateFinalAmount(
+const useFilteredCartItems = (): ReadonlyArray<ICartItem> => {
+  const { cartItems } = useShoppingCartState()
+
+  return Array.from(cartItems.values()).filter(filterInvalidBasketItems)
+}
+
+export const Receipt: React.FC = () => {
+  const filteredCartItems: ReadonlyArray<ICartItem> = useFilteredCartItems()
+  const discounts: ReadonlyArray<IDiscount> = useDiscounts()
+
+  const basketItemsList: ReadonlyArray<IRecieptListItem> = filteredCartItems.map((b) => ({
+    name: `${getCartItemName(b.type)} x${b.amount}`,
+    price: calculateCartItemTotalPrice(b),
+  }))
+
+  const subTotal = calculateSubTotal(basketItemsList.map((b) => b.price))
+
+  const finalAmount = calculateFinalAmount(
     subTotal,
-    filteredSpecialOffers.map((s) => s.overallDiscount),
+    discounts.map((d) => d.amountSaved),
   )
-
-  const basketItemsString: Array<string> = filteredBasketItems.map(
-    (b) => `${b.amount}x ${b.type}: ${toValidCurrency(calculateBasketPrice(b.amount, b.price))}`,
-  )
-  const subTotalStr = `Sub Total: ${toValidCurrency(subTotal)}`
-  const specialOffersStr = filteredSpecialOffers.map(
-    (s) => `${s.name} -${toValidCurrency(s.overallDiscount)}`,
-  )
-  const finalAmountStr = `Final: ${toValidCurrency(finalAmount)}`
 
   return (
     <Receipt__Container>
-      <Receipt__List items={basketItemsString} />
-      <Receipt__Divider />
-      <Receipt__SubTotalAndDiscounts subTotal={subTotalStr} discounts={specialOffersStr} />
-      <Receipt__Divider />
-      <Receipt_FinalAmount finalAmount={finalAmountStr} />
+      <Receipt__List items={basketItemsList} />
+      <hr />
+      <Receipt__SubTotalAndDiscounts subTotal={subTotal} discounts={discounts} />
+      <hr />
+      <Receipt_FinalAmount finalAmount={finalAmount} />
     </Receipt__Container>
   )
 }
 
-export const Receipt__Container: React.FC<IRecieptContainer> = ({ className, children }) => (
+export const Receipt__Container: React.FC<IRecieptContainerProps> = ({ className, children }) => (
   <div className={combineClassNames(className, styles.receiptContainer)}>
     <h2 className={styles.receiptHeader}>Receipt</h2>
-    {children}
+    <div>{children}</div>
   </div>
 )
 
-export const Receipt__List: React.FC<IRecieptList> = ({ className, items }) => (
+export const Receipt__List: React.FC<IRecieptListProps> = ({ className, items }) => (
   <ul className={combineClassNames(className, styles.receiptListContainer)}>
-    {items.map((item, idx) => (
+    {items.map(({ name = '', price }, idx) => (
       <li key={idx} className={styles.receiptListItem}>
-        {item}
+        <span className={styles.receiptListItemName}>{name}</span>
+        <span className={styles.receiptListItemPrice}>{toValidCurrency(price)}</span>
       </li>
     ))}
   </ul>
 )
 
-export const Receipt__Divider: React.FC = () => <hr />
-
-export const Receipt__SubTotalAndDiscounts: React.FC<IRecieptListSubTotalAndDiscounts> = ({
+export const Receipt__SubTotalAndDiscounts: React.FC<IRecieptListSubTotalAndDiscountsProps> = ({
   subTotal,
   discounts = [],
 }) => {
   const subTotalStrikeThroughClassName =
     discounts.length > 0 ? styles['receiptListContainer--subtotalWithDiscounts'] : ''
 
+  const subTotalItem: IRecieptListItem = { name: 'Sub Total:', price: subTotal }
+  const discountItems: ReadonlyArray<IRecieptListItem> = discounts.map((d) => ({
+    name: d.discountName,
+    price: -d.amountSaved,
+  }))
   return (
-    <Receipt__List items={[subTotal, ...discounts]} className={subTotalStrikeThroughClassName} />
+    <Receipt__List
+      items={[subTotalItem, ...discountItems]}
+      className={subTotalStrikeThroughClassName}
+    />
   )
 }
 
-export const Receipt_FinalAmount: React.FC<IReceiptFnalAmount> = ({ finalAmount }) => (
-  <Receipt__List items={[finalAmount]} className={styles['receiptListContainer--finalAmount']} />
+export const Receipt_FinalAmount: React.FC<IReceiptFinalAmountProps> = ({ finalAmount }) => (
+  <Receipt__List
+    items={[{ name: `Final:`, price: finalAmount }]}
+    className={styles['receiptListContainer--finalAmount']}
+  />
 )
 
 export default Receipt

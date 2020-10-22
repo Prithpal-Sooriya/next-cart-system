@@ -1,15 +1,14 @@
 .receiptContainer {
-  /* Box Shadow built by: https://www.cssmatic.com/box-shadow */
-  /* -webkit-box-shadow: 28px 24px 15px -10px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 28px 24px 15px -10px rgba(0, 0, 0, 0.1);
-  box-shadow: 28px 24px 15px -10px rgba(0, 0, 0, 0.1); */
-
   background-color: var(--receipt-background);
   color: var(--text-white);
 
   position: relative;
-  height: 80%;
-  padding: 32px 16px;
+  min-height: 80%;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .receiptHeader {
@@ -20,59 +19,92 @@
   To create the "zig zag" pattern on the container
   http://jsfiddle.net/justinmc/QqnD3/
 */
-.receiptContainer::after {
-  content: '';
-  display: block;
-
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-
-  background: linear-gradient(-45deg, var(--card-background) 16px, transparent 0),
-    linear-gradient(45deg, var(--card-background) 16px, transparent 0);
-  background-position: left bottom;
-  background-repeat: repeat-x;
-  background-size: 32px 32px;
-  width: 100%;
-  height: 32px;
-}
-
+/* TOP Zig Zag Boarder */
 .receiptContainer::before {
   content: '';
   display: block;
 
   position: absolute;
-  top: 0px;
+  top: -8px;
   left: 0px;
 
   background: linear-gradient(
-      -45deg,
-      var(--receipt-background) 16px,
-      var(--card-background) 16px,
-      var(--card-background) 16px,
-      transparent 0
+      45deg,
+      transparent 33.333%,
+      var(--receipt-background) 33.333%,
+      var(--receipt-background) 66.667%,
+      transparent 66.667%
     ),
-    linear-gradient(45deg, transparent 16px, var(--card-background) 0);
-
+    linear-gradient(
+      -45deg,
+      transparent 33.333%,
+      var(--receipt-background) 33.333%,
+      var(--receipt-background) 66.667%,
+      transparent 66.667%
+    );
   background-position: left top;
-  background-repeat: repeat-x;
-  background-size: 32px;
+  background-size: 8px 16px;
   width: 100%;
-  height: 32px;
+  height: 8px;
+}
+
+/* Bottom Zig Zag boarder */
+.receiptContainer::after {
+  content: '';
+  display: block;
+
+  position: absolute;
+  bottom: -8px;
+  left: 0px;
+
+  /* background: linear-gradient(-45deg, var(--card-background) 16px, transparent 0),
+    linear-gradient(45deg, var(--card-background) 16px, transparent 0); */
+  background: linear-gradient(
+      45deg,
+      transparent 33.333%,
+      var(--receipt-background) 33.333%,
+      var(--receipt-background) 66.667%,
+      transparent 66.667%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 33.333%,
+      var(--receipt-background) 33.333%,
+      var(--receipt-background) 66.667%,
+      transparent 66.667%
+    );
+  background-position: left bottom;
+  background-size: 8px 16px;
+  width: 100%;
+  height: 8px;
 }
 
 .receiptListContainer {
   text-align: end;
+  padding: 0;
 }
 
 .receiptListItem {
   list-style-type: none;
+  display: flex;
+  justify-content: space-between;
 }
 
-.receiptListContainer--subtotalWithDiscounts > .receiptListItem:first-child {
+.receiptListItemName {
+  text-align: start;
+}
+
+.receiptListItemPrice {
+  text-align: end;
+  white-space: nowrap;
+}
+
+.receiptListContainer--subtotalWithDiscounts
+  > .receiptListItem:first-child
+  > .receiptListItemPrice {
   text-decoration: line-through;
 }
 
-.receiptListContainer--finalAmount > .receiptListItem:first-child {
-  font-size: large;
+.receiptListContainer--finalAmount > .receiptListItem {
+  font-size: x-large;
 }

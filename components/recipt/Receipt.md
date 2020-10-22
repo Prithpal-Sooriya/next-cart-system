@@ -2,35 +2,18 @@
 
 ```tsx
 import Receipt from './Receipt'
-const basketItems = [
-  {
-    type: 'Cheese',
-    amount: 0,
-    price: 0.9,
-  },
-  {
-    type: 'Milk',
-    amount: 3,
-    price: 0.5,
-  },
-  {
-    type: 'Soup',
-    amount: 1,
-    price: 0.6,
-  },
-  {
-    type: 'Butter',
-    amount: 1,
-    price: 1.2,
-  },
-]
-const specialOffers = [
-  {
-    name: 'Test Special Offer',
-    overallDiscount: 1.1,
-  },
-]
-;<Receipt basketItems={basketItems} specialOffers={specialOffers} />
+import ShoppingCartProvider, { useCartItemAmountState } from 'root/context/ShoppingCartContext'
+import { CartItemType } from 'root/utils/specialOffers'
+// Test Purposes = Dummy component that updates the context
+const DummyComponent = () => {
+  const [butter, setButter] = useCartItemAmountState(CartItemType.Butter)
+  React.useEffect(() => setButter(5), [])
+  return null
+}
+;<ShoppingCartProvider>
+  <DummyComponent />
+  <Receipt />
+</ShoppingCartProvider>
 ```
 
 ### Receipt Container
@@ -40,19 +23,22 @@ import { Receipt__Container } from './Receipt'
 ;<Receipt__Container children={<div style={{ width: '100px', height: '100px' }} />} />
 ```
 
-### Receipt With Prices & Divider
+### Receipt With Prices
 
 ```tsx
-import { Receipt__Container, Receipt__List, Receipt__Divider } from './Receipt'
-const breadTotalString = '4x Bread: £5.30'
-const CheeseTotalString = '4x Cheese: £2.80'
+import { Receipt__Container, Receipt__List } from './Receipt'
+
+const items = [
+  { name: 'Positive Number', price: 5.2 },
+  { name: 'Negative Number', price: -3.2 },
+]
+
 ;<Receipt__Container>
-  <Receipt__List items={[breadTotalString, CheeseTotalString]} />
-  <Receipt__Divider />
+  <Receipt__List items={items} />
 </Receipt__Container>
 ```
 
-### Receipt SubTotal (with discounts) & Final amount
+### Receipt SubTotal; Discounts; Final amount
 
 ```tsx
 import {
@@ -61,11 +47,12 @@ import {
   Receipt__Divider,
   Receipt_FinalAmount,
 } from './Receipt'
-const subTotal = 'SubTotal: £10.60'
-const discounts = ['Buy a cheese, get second cheese for free! -£3.60']
+const subTotal = 10.6
+const discounts = [{ discountName: 'Test Discount', amountSaved: 0.5 }]
+const finalAmount = subTotal - 0.5
 ;<Receipt__Container>
   <Receipt__SubTotalAndDiscounts subTotal={subTotal} discounts={discounts} />
-  <Receipt__Divider />
-  <Receipt_FinalAmount finalAmount={'£7.00'} />
+  <hr />
+  <Receipt_FinalAmount finalAmount={finalAmount} />
 </Receipt__Container>
 ```
