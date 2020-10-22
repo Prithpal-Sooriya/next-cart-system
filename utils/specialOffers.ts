@@ -1,20 +1,58 @@
 export enum CartItemType {
-  Bread = 'Bread',
-  Milk = 'Milk',
-  Cheese = 'Cheese',
-  Soup = 'Soup',
-  Butter = 'Butter',
+  Bread = '#Bread#',
+  Milk = '#Milk#',
+  Cheese = '#Cheese#',
+  Soup = '#Soup#',
+  Butter = '#Butter#',
 }
 
 export type ICartItem = {
-  type: CartItemType
+  readonly type: CartItemType
+  readonly price: number
   amount: number
-  price: number
 }
 
 export type IDiscount = {
   discountedPrice: number
   amountSaved: number
+  discountName: string
+}
+
+export const CHEESE_SPECIAL_OFFER = `Buy a cheese, get second cheese for free!`
+export const SOUP_SPECIAL_OFFER = `Buy a soup, get a half price bread!`
+export const BUTTER_SPECIAL_OFFER = `Get 1/3 off Butter!`
+
+export function getSpecialOfferName(type: CartItemType): string {
+  if (type === CartItemType.Cheese) {
+    return CHEESE_SPECIAL_OFFER
+  }
+
+  if (type === CartItemType.Soup) {
+    return SOUP_SPECIAL_OFFER
+  }
+
+  if (type === CartItemType.Butter) {
+    return BUTTER_SPECIAL_OFFER
+  }
+
+  return ''
+}
+
+export function getCartItemName(type: CartItemType): string {
+  switch (type) {
+    case CartItemType.Bread:
+      return 'Bread'
+    case CartItemType.Milk:
+      return 'Milk'
+    case CartItemType.Cheese:
+      return 'Cheese'
+    case CartItemType.Soup:
+      return 'Soup'
+    case CartItemType.Butter:
+      return 'Butter'
+    default:
+      return ''
+  }
 }
 
 const invalidateCartItems = (
@@ -49,13 +87,9 @@ const makeBuyOneGetOneFreeOffer = (expectedItemToDiscount: CartItemType) => (
   const amountSaved = numberOfPairs * originalPrice
   const discountedPrice = parseBackToCurrencyNumber(amount * originalPrice - amountSaved)
 
-  return { discountedPrice, amountSaved }
+  return { discountedPrice, amountSaved, discountName: getSpecialOfferName(expectedItemToDiscount) }
 }
 
-// Buy a cheese, get second cheese for free!
-export const buyCheeseGetOneFreeOffer = makeBuyOneGetOneFreeOffer(CartItemType.Cheese)
-
-// When you buy a soup, bread is half price (1 to 1)
 const makeHalfPriceOffer = (
   expectedItemToPurchase: CartItemType,
   expectedItemToDiscount: CartItemType,
@@ -105,10 +139,8 @@ const makeHalfPriceOffer = (
   const discountedPrice = parseBackToCurrencyNumber(discountedItemsPrice + nonDiscountedItemsPrice)
   const amountSaved = parseBackToCurrencyNumber(totalPrice - discountedPrice)
 
-  return { discountedPrice, amountSaved }
+  return { discountedPrice, amountSaved, discountName: getSpecialOfferName(expectedItemToPurchase) }
 }
-
-export const buySoupHalfPriceBreadOffer = makeHalfPriceOffer(CartItemType.Soup, CartItemType.Bread)
 
 const makeOneThirdOffOffer = (expectedItemToDiscount: CartItemType) => (
   itemToDiscount: ICartItem,
@@ -132,7 +164,11 @@ const makeOneThirdOffOffer = (expectedItemToDiscount: CartItemType) => (
   const amountSaved = parseBackToCurrencyNumber(originalPrice / 3) * amount
   const discountedPrice = parseBackToCurrencyNumber(amount * originalPrice - amountSaved)
 
-  return { discountedPrice, amountSaved }
+  return { discountedPrice, amountSaved, discountName: getSpecialOfferName(expectedItemToDiscount) }
 }
+
+export const buyCheeseGetOneFreeOffer = makeBuyOneGetOneFreeOffer(CartItemType.Cheese)
+
+export const buySoupHalfPriceBreadOffer = makeHalfPriceOffer(CartItemType.Soup, CartItemType.Bread)
 
 export const oneThirdOffButterOffer = makeOneThirdOffOffer(CartItemType.Butter)

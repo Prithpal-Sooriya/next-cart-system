@@ -1,9 +1,12 @@
 import {
+  BUTTER_SPECIAL_OFFER,
   buyCheeseGetOneFreeOffer,
   buySoupHalfPriceBreadOffer,
   CartItemType,
+  CHEESE_SPECIAL_OFFER,
   ICartItem,
   oneThirdOffButterOffer,
+  SOUP_SPECIAL_OFFER,
 } from './specialOffers'
 
 const itemPrice = 1.0
@@ -32,7 +35,7 @@ const butterCartItem: ICartItem = {
   type: CartItemType.Butter,
 }
 
-describe('specialOffers - BOGOF tests', () => {
+describe('specialOffers - Cheese BOGOF tests', () => {
   const buildCheeseItem = (amount: number, price: number) => ({ ...cheeseCartItem, amount, price })
   it('throws error when cart item provided is not correct', () => {
     const callWithInvalidItemTypeFn = () =>
@@ -51,6 +54,11 @@ describe('specialOffers - BOGOF tests', () => {
       buyCheeseGetOneFreeOffer(buildCheeseItem(negativeItemAmount, itemPrice))
     expect(callWithInvalidItemAmountFn2).toThrow(TypeError)
   }),
+    it('returns the correct special offer name', () => {
+      const expectedName = CHEESE_SPECIAL_OFFER
+      const { discountName } = buyCheeseGetOneFreeOffer(cheeseCartItem)
+      expect(discountName).toEqual(expectedName)
+    }),
     it('is not applied to 1 item', () => {
       const itemAmount = 1
 
@@ -140,6 +148,11 @@ describe('specialOffers - Buy Soup and get bread 1/2 price', () => {
       expect(callWithInvalidDiscountItemPrice).toThrow(TypeError)
       expect(callWithInvalidDiscountItemAmount).toThrow(TypeError)
     })
+  it('returns the correct special offer name', () => {
+    const expectedName = SOUP_SPECIAL_OFFER
+    const { discountName } = buySoupHalfPriceBreadOffer(soupCartItem, breadCartItem)
+    expect(discountName).toEqual(expectedName)
+  })
   it('produces 0 discount it has soup but no bread', () => {
     const soupAmount = 1
     const breadAmount = 0
@@ -235,25 +248,29 @@ describe('specialOffers - One Third off butter', () => {
       expect(callWithInvalidAmount).toThrow(TypeError)
       expect(callWithInvalidPrice).toThrow(TypeError)
     }),
-    it('produces 0 discount if the amount is 0, or price is 0', () => {
-      let amount = 0
-      let price = 1
+    it('returns the correct special offer name', () => {
+      const expectedName = BUTTER_SPECIAL_OFFER
+      const { discountName } = oneThirdOffButterOffer(butterCartItem)
+      expect(discountName).toEqual(expectedName)
+    })
+  it('produces 0 discount if the amount is 0, or price is 0', () => {
+    let amount = 0
+    let price = 1
 
-      const { amountSaved, discountedPrice } = oneThirdOffButterOffer(
-        buildButterCartItem(amount, price),
-      )
-      expect(amountSaved).toBe(0)
-      expect(discountedPrice).toBe(0)
+    const { amountSaved, discountedPrice } = oneThirdOffButterOffer(
+      buildButterCartItem(amount, price),
+    )
+    expect(amountSaved).toBe(0)
+    expect(discountedPrice).toBe(0)
 
-      amount = 1
-      price = 0
-      const {
-        amountSaved: amountSaved2,
-        discountedPrice: discountedPrice2,
-      } = oneThirdOffButterOffer(buildButterCartItem(amount, price))
-      expect(amountSaved2).toBe(0)
-      expect(discountedPrice2).toBe(0)
-    }),
+    amount = 1
+    price = 0
+    const { amountSaved: amountSaved2, discountedPrice: discountedPrice2 } = oneThirdOffButterOffer(
+      buildButterCartItem(amount, price),
+    )
+    expect(amountSaved2).toBe(0)
+    expect(discountedPrice2).toBe(0)
+  }),
     it('is 1/3 off price when given 1 item', () => {
       const amount = 1
       const price = 1.2
