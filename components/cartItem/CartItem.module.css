@@ -11,7 +11,7 @@
 .cartItemTitle {
   display: block;
   font-weight: bold;
-  font-size: x-large;
+  font-size: 2rem;
   color: var(--text-black);
   padding-bottom: 0.1em;
 }
@@ -23,7 +23,7 @@
 
 .cartItemPrice {
   font-weight: bolder;
-  font-size: large;
+  font-size: 1.5rem;
 }
 
 .cartItemPrice__CurrencyIcon {
