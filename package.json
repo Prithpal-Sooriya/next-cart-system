@@ -2,9 +2,10 @@
   "name": "with-typescript",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next",
+    "dev": "node proxyDevServer.js",
     "build": "next build",
-    "start": "next start",
+    "build:all": "yarn build && yarn docs:build",
+    "start": "NODE_ENV=production node proxyDevServer.js",
     "type-check": "tsc",
     "docs": "styleguidist server",
     "docs:build": "styleguidist build",

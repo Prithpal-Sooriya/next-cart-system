@@ -1,4 +1,6 @@
 import React from 'react'
+import Link from 'next/link'
+
 import CartItem from '../components/cartItem/CartItem'
 import Receipt from '../components/recipt/Receipt'
 import { CartItemType } from '../utils/specialOffers'
@@ -12,6 +14,9 @@ const IndexPage: React.FC = () => {
         <div className={styles.cardContent}>
           <nav className={styles.navContent}>
             <h1>Shopping Cart</h1>
+            <Link href="/docs" prefetch={false}>
+              Docs
+            </Link>
           </nav>
           <main className={styles.mainContent}>
             <div className={styles.cartContainer}>

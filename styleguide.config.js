@@ -2,6 +2,12 @@ const path = require('path')
 
 const root = path.resolve(__dirname)
 
+const webpackOutput = {
+  path: `${root}/build/styleguide`,
+  filename: 'bundle.js',
+  chunkFilename: '[name].js',
+}
+
 const webpackConfig = {
   module: {
     rules: [
@@ -42,4 +48,11 @@ module.exports = {
     root: path.resolve(__dirname, './'),
   },
   webpackConfig,
+  dangerouslyUpdateWebpackConfig: (config) => ({ ...config, output: webpackOutput }),
+  configureServer: (app) => {
+    app.get('/static/*', (req, res) => {
+      const file = req.originalUrl.split('?')[0]
+      res.status(200).sendFile(`${root}${file}`)
+    })
+  },
 }
