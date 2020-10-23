@@ -1,41 +1,54 @@
-# TypeScript Next.js example
+# NEXT + Typescript + Styleguidist shopping cart example.
 
-This is a really simple project that shows the usage of Next.js with TypeScript.
+## How to run:
 
-## Deploy your own
+1. Clone/download this repository
+2. run `yarn` to install the node_modules
+3. Scripts:
 
-Deploy the example using [Vercel](https://vercel.com):
+   - `yarn docs` runs the styleguidist framework for isolated component development.
+   - `yarn dev` runs the dev server
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/vercel/next.js/tree/canary/examples/with-typescript)
+     - A `yarn docs:build` is required for the docs link to work.
 
-## How to use it?
+   - `yarn build` will build the NEXT project
+   - `yarn docs:build` will build the styleguidist project.
+   - `yarn test` to run the test environment
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+## New frameworks and paradigms.
 
-```bash
-npx create-next-app --example with-typescript with-typescript-app
-# or
-yarn create next-app --example with-typescript with-typescript-app
-```
+Recently I've been interested in how [RedwoodJS](https://redwoodjs.com/) breaks down components into "Cells" (atomic) components and the paradigm of Single File Components (SFC).
 
-Deploy it to the cloud with [Vercel](https://vercel.com/import?filter=next.js&utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+Also tried out [React StyleGuidist](https://github.com/styleguidist/react-styleguidist) as an alternative to StoryBook & for isolated component development.
 
-## Notes
+Previous use of StoryBooks was that it was very config heavy (Seperate `component.story.ts file & markdown file). So having a way of writing "Stories" with just markdown files is refreshing.
 
-This example shows how to integrate the TypeScript type system into Next.js. Since TypeScript is supported out of the box with Next.js, all we have to do is to install TypeScript.
+## Conclusion
 
-```
-npm install --save-dev typescript
-```
+Breaking down components into "cells" and adding them to the styleguide made a nice living documentation for how they look and work (code snippets viewable in docs).
 
-To enable TypeScript's features, we install the type declarations for React and Node.
+One downside is that component cells need to be exported to be used in React Styleguidist - thus the `Component__Element` namescheme to indicate where the cell came from. I'm on the fence for this sort of namescheme. Maybe this can be mitigated through [SFCs with storybooks by combining stories & components into 1 file?](https://www.swyx.io/react-sfcs-here/#merging-csf-and-sfcs)
 
-```
-npm install --save-dev @types/react @types/react-dom @types/node
-```
+### Improvements
 
-When we run `next dev` the next time, Next.js will start looking for any `.ts` or `.tsx` files in our project and builds it. It even automatically creates a `tsconfig.json` file for our project with the recommended settings.
+**Styles**
 
-Next.js has built-in TypeScript declarations, so we'll get autocompletion for Next.js' modules straight away.
+- CSS Modules is nice for isolating CSS for components. However doesn't really follow a BEM style. Maybe providing a BEM namescheme with CSS Modules would be more scaleable?
+- The app also is not mobile friendly, if we were to start again then it might be better to have a mobile first design / use exsiting design systems.
 
-A `type-check` script is also added to `package.json`, which runs TypeScript's `tsc` CLI in `noEmit` mode to run type-checking separately. You can then include this, for example, in your `test` scripts.
+**State Management** - Just used React Context with `useReducer` for this app. If we needed to share state throughout larger apps (or if need to perform more complex processes) then a 3rd party library like Redux & Sagas would suffice.
+
+**I18n**
+
+- No I18n was added to this, but can be an easy addition with [i18Next](https://www.i18next.com/) or other localisation libs.
+- Same for currency, we can use built in [Intl Number Format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) or 3rd party (if we need currency conversions)
+
+**Tests**
+
+- Styleguidist can be used for **Manual** visual tests, but it would be better to automate. Wanted to try [StyleGuidists Snapshot](https://github.com/styleguidist/snapguidist) and [Automated visual test](https://github.com/unindented/react-styleguidist-visual) plugins, however failed to get them to work (both outdated & also had issues using inside WSL).
+
+  - Storybook has a variety of plugins for testing unlike styleguidist.
+
+- We have used React Testing Library for unit tests, specifically on the pure components. In the future for connected & more complex components we can use integration tests.
+
+- Something we haven't tested out was testing hooks in isolation. By using custom hooks we can isolate component tests from logic (hook logic). We can test this using [React Hooks Testing Library](https://github.com/testing-library/react-hooks-testing-library).
