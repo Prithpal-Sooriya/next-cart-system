@@ -80,7 +80,7 @@ const useFilteredCartItems = (): ReadonlyArray<ICartItem> => {
   return Array.from(cartItems.values()).filter(filterInvalidBasketItems)
 }
 
-export const Receipt: React.FC = () => {
+const Receipt: React.FC = () => {
   const filteredCartItems: ReadonlyArray<ICartItem> = useFilteredCartItems()
   const discounts: ReadonlyArray<IDiscount> = useDiscounts()
 

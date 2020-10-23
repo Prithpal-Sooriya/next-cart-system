@@ -21,7 +21,7 @@ export const Counter: React.FC<ICounterProps> = ({ min = 0, max = 10, value, onC
 
   const boundedValue = clampValue(min, max, value)
   return (
-    <div className={styles.counterContainer}>
+    <div className={styles.counterContainer} data-testid="counterContainer">
       <Counter__ButtonRemove onClick={onRemove} />
       <Counter__Label labelText={boundedValue.toString()} />
       <Counter__ButtonAdd onClick={onAdd} />

@@ -3,7 +3,7 @@ const path = require('path')
 const root = path.resolve(__dirname)
 
 const webpackOutput = {
-  path: `${root}/build/styleguide`,
+  path: `${root}/styleguide/build`,
   filename: 'bundle.js',
   chunkFilename: '[name].js',
 }

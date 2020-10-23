@@ -17,7 +17,7 @@ type ICartItemPriceProps = {
   price: number
 }
 
-type ICartItemProps = {
+export type ICartItemProps = {
   title: string
   specialOffer?: string
   itemPrice: number
@@ -57,7 +57,7 @@ export const CartItem: React.FC<ICartItemProps> = ({
 }) => {
   const totalPrice = amount * itemPrice
   return (
-    <div className={styles.cartItemContainer}>
+    <div className={styles.cartItemContainer} data-testid="cartItemContainer">
       <CartItem__Label {...{ title, specialOffer }} />
       <Counter value={amount} onChange={setAmount} />
       <CartItem__Price price={totalPrice} />
@@ -67,14 +67,18 @@ export const CartItem: React.FC<ICartItemProps> = ({
 
 export const CartItem__Label: React.FC<ICartItemLabelProps> = ({ title, specialOffer }) => (
   <div className={styles.cartItemTitleContainer}>
-    <span className={styles.cartItemTitle}>{title}</span>
-    <span className={styles.cartItemSubTitle}>{specialOffer}</span>
+    <span className={styles.cartItemTitle} data-testid="cartItemTitle">
+      {title}
+    </span>
+    <span className={styles.cartItemSubTitle} data-testid="cartItemSubTitle">
+      {specialOffer}
+    </span>
   </div>
 )
 
 export const CartItem__Price: React.FC<ICartItemPriceProps> = ({ price }) => (
-  <div className={styles.cartItemPrice}>
+  <div className={styles.cartItemPrice} data-testid="cartItemPrice">
     <sup className={styles.cartItemPrice__CurrencyIcon}>£</sup>
-    <span>{price.toFixed(2)}</span>
+    <span data-testid="price">{price.toFixed(2)}</span>
   </div>
 )
